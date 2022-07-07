@@ -262,7 +262,7 @@ class AttentionFlow extends Component {
   drawEgoInfoCard() {
     // Set ego title
     // this.divTitle.innerHTML = '<h5><b>' + egoNode.title + '</b></h5>';
-    this.divTitle.innerHTML = '<h5><b>Influence Network</b></h5>';
+    this.divTitle.innerHTML = '<h5><b>Sankey chart</b></h5>';
 
     // update ego information
     this.divInfo.innerHTML = '';
