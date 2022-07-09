@@ -3,86 +3,51 @@ import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import { useD3 } from '../Utilities/useD3';
 
-const BarChart = () => {
+const BarChart = ({ width, height, vbWidth, vbHeight, data, ...rest }) => {
 
   // Returns an array of m psuedorandom, smoothly-varying non-negative numbers.
   // Inspired by Lee Byron’s test data generator.
   // http://leebyron.com/streamgraph/
-  const bumps = (m) => {
-    const values = [];
 
-    // Initialize with uniform random values in [0.1, 0.2).
-    for (let i = 0; i < m; ++i) {
-      values[i] = 0.1 + 0.1 * Math.random();
-    }
+  const normalizeContributingData = () => {
+    const arr = [];
 
-    // Add five random bumps.
-    for (let j = 0; j < 5; ++j) {
-      const x = 1 / (0.1 + Math.random());
-      const y = 2 * Math.random() - 0.5;
-      const z = 10 / (0.1 + Math.random());
-      for (let i = 0; i < m; i++) {
-        const w = (i / m - y) * z;
-        values[i] += x * Math.exp(-w * w);
+    let tmp = [];
+    let day_cnt = Math.ceil((new Date("06/30/2022") - new Date(data.createdAt)) / (1000 * 60 * 60 * 24)) + 1;
+    data.neighbors.map((neighbor) => {
+      tmp = [];
+      // for (let i = new Date(data.createdAt); i <= new Date("06/30/2022"); i.setDate(i.getDate() + 1)) {
+      for (let i = 0; i < day_cnt; i++) {
+        tmp.push(0);
       }
-    }
+      for (let i = 0; i < neighbor.dailyContributingView.length; i++) {
+        // console.log(new Date(neighbor.dailyContributingView[i].date));
+        let idx = Math.ceil((new Date(neighbor.dailyContributingView[i].date) - new Date(data.createdAt)) / (1000 * 60 * 60 * 24));
+        tmp[idx] = neighbor.dailyContributingView[i].view;
+      }
+      arr.push(tmp);
+    });
 
-    // Ensure all values are positive.
-    for (let i = 0; i < m; ++i) {
-      values[i] = Math.max(0, values[i]);
+    tmp = [];
+    for (let i = 0; i < day_cnt; i++) {
+      tmp.push(Math.max(data.dailyView[i] - arr[0][i] - arr[1][i] - arr[2][i], 0));
     }
+    arr.push(tmp);
 
-    return values;
+    arr.reverse();  // rest -> 3 -> 2 -> 1
+    // console.log("normalizeContributingData:", arr);
+    return arr;
   }
 
   const margin = ({ top: 0, right: 0, bottom: 10, left: 0 });
 
-  const height = 500;
-  const width = 500;
+  const m = Math.ceil((new Date("06/30/2022") - new Date(data.createdAt)) / (1000 * 60 * 60 * 24)) + 1; // number of values per series
 
-  const m = 58; // number of values per series
-
-  const n = 5; // number of series
-
-  // function transitionGrouped() {
-  //   y.domain([0, yMax]);
-
-  //   rect.transition()
-  //     .duration(500)
-  //     .delay((d, i) => i * 20)
-  //     .attr("x", (d, i) => x(i) + x.bandwidth() / n * d[2])
-  //     .attr("width", x.bandwidth() / n)
-  //     .transition()
-  //     .attr("y", d => y(d[1] - d[0]))
-  //     .attr("height", d => y(0) - y(d[1] - d[0]));
-  // }
-
-  // function transitionStacked() {
-  //   y.domain([0, y1Max]);
-
-  //   rect.transition()
-  //     .duration(500)
-  //     .delay((d, i) => i * 20)
-  //     .attr("y", d => y(d[1]))
-  //     .attr("height", d => y(d[0]) - y(d[1]))
-  //     .transition()
-  //     .attr("x", (d, i) => x(i))
-  //     .attr("width", x.bandwidth());
-  // }
-
-  // function update(layout) {
-  //   if (layout === "stacked") transitionStacked();
-  //   else transitionGrouped();
-  // }
-
-  // return Object.assign(svg.node(), { update });
-
-  // render = Object.assign(svg.node(), { update });
+  const n = data.neighbors.length + 1; // number of series
 
   const layout = "stacked";
-  // chart().update(layout);
 
-  // console.log(bumps(m));
+  const new_yz = normalizeContributingData();
 
   const ref = useD3(
     (svg) => {
@@ -90,11 +55,18 @@ const BarChart = () => {
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x).tickSizeOuter(0).tickFormat(() => ""))
 
-      const z = d3.scaleSequential(d3.interpolateBlues)
-        .domain([-0.5 * n, 1.5 * n])
+      const yAxis = svg => svg.append("g")
+        .attr("transform", `translate(5,0)`)
+        .call(d3.axisLeft(x).tickSizeOuter(0).tickFormat(() => ""))
 
-      const yz = d3.range(n).map(() => bumps(m)) // the y-values of each of the n series
-      console.log("yz:", yz);
+      // const z = d3.scaleSequential(d3.interpolateGreens)
+      //   .domain([-0.5 * n, 1.5 * n])
+      // console.log("z:", z)
+      const z = ["#1192e8", "#198038", "#da1e28", "#b28600"]; // Color code
+
+      // const yz = d3.range(n).map(() => bumps(m)) // the y-values of each of the n series
+      const yz = new_yz;
+      // console.log("yz:", yz);
 
       const y01z = d3.stack()
         .keys(d3.range(n))
@@ -116,12 +88,16 @@ const BarChart = () => {
         .rangeRound([margin.left, width - margin.right])
         .padding(0.08)
 
-      svg.attr("viewBox", [0, 0, width, height]);
+      svg
+        .attr("height", height)
+        .attr("width", width)
+        .attr("viewBox", [0, 0, vbWidth, vbHeight]);
 
       const rect = svg.selectAll("g")
         .data(y01z)
         .join("g")
-        .attr("fill", (d, i) => z(i))
+        // .attr("fill", (d, i) => z(i))
+        .attr("fill", (d, i) => z[i])
         .selectAll("rect")
         .data(d => d)
         .join("rect")
@@ -131,18 +107,41 @@ const BarChart = () => {
         .attr("height", 0);
 
       svg.append("g")
-        .call(xAxis);
+        .call(xAxis)
+        .call(yAxis);
 
-      y.domain([0, y1Max]);
+      function transitionGrouped() {
+        y.domain([0, yMax]);
 
-      rect.transition()
-        .duration(500)
-        .delay((d, i) => i * 20)
-        .attr("y", d => y(d[1]))
-        .attr("height", d => y(d[0]) - y(d[1]))
-        .transition()
-        .attr("x", (d, i) => x(i))
-        .attr("width", x.bandwidth());
+        rect.transition()
+          .duration(500)
+          .delay((d, i) => i * 20)
+          .attr("x", (d, i) => x(i) + x.bandwidth() / n * d[2])
+          .attr("width", x.bandwidth() / n)
+          .transition()
+          .attr("y", d => y(d[1] - d[0]))
+          .attr("height", d => y(0) - y(d[1] - d[0]));
+      }
+
+      function transitionStacked() {
+        y.domain([0, y1Max]);
+
+        rect.transition()
+          .duration(500)
+          .delay((d, i) => i * 20)
+          .attr("y", d => y(d[1]))
+          .attr("height", d => y(d[0]) - y(d[1]))
+          .transition()
+          .attr("x", (d, i) => x(i))
+          .attr("width", x.bandwidth());
+      }
+
+      function update(layout) {
+        if (layout === "stacked") transitionStacked();
+        else transitionGrouped();
+      }
+
+      update(layout);
     }, []);
 
   return (

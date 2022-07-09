@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { AlluvialChart } from "@carbon/charts-react";
+import Slider from 'rc-slider';
+
+import 'rc-slider/assets/index.css';
 import "@carbon/charts/styles.css";
 // Or
 // import "@carbon/charts/styles/styles.scss";
@@ -8,8 +11,18 @@ import "@carbon/charts/styles.css";
 // IBM Plex should either be imported in your project by using Carbon
 // or consumed manually through an import
 import "./plex-and-carbon-components.css";
+
 import data from './Data/data2.json';
+import story_data from './Data/demodata.json';
 import BarChart from "../BarChart";
+
+const width = 1200;
+const barchartHeight = 200;
+const sankeychartHeight = 300;
+
+const timesliderStyle = {
+  width: width,
+};
 
 export default class App extends React.Component {
   state = {
@@ -60,8 +73,8 @@ export default class App extends React.Component {
           // }
         ]
       },
-      "height": "300px",
-      "width": "600px",
+      "height": sankeychartHeight + "px",
+      "width": "1200px",
       "color": {
         "scale": {
           "Cards": "#da1e28",
@@ -82,14 +95,32 @@ export default class App extends React.Component {
     }
   };
 
+  componentDidMount() {
+    // console.log("story_data:", story_data.neighbors.length);
+  }
+
+  log = (value) => {
+    console.log(value); //eslint-disable-line
+  }
+
+
   render = () => (
-    <>
+    <div style={{ height: '100px', margin: '100px 150px', }}>
+      <BarChart
+        width={width}
+        height={barchartHeight}
+        vbWidth={width}
+        vbHeight={barchartHeight}
+        data={story_data}
+      />
+      <div style={timesliderStyle}>
+        <Slider range allowCross={false} defaultValue={[0, 20]} onChange={this.log} />
+      </div>
       <AlluvialChart
         data={this.state.data}
         options={this.state.options}>
       </AlluvialChart>
-      <BarChart />
-    </>
+    </div>
   );
 }
 ReactDOM.render(<App />, document.getElementById("root"));

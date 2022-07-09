@@ -16,6 +16,7 @@
     "d3": "^7.6.1",
     "d3-delaunay": "^6.0.2",
     "nouislider": "^15.5.1",
+    "rc-slider": "^10.0.0",
     "react": "^17.0.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-autosuggest": "^10.1.0",
