@@ -27,6 +27,10 @@ const timesliderStyle = {
 const colorList = ["#b28600", "#da1e28", "#198038", "#ee538b"];
 const focusedColor = "#1192e8";
 
+const startDate = new Date(story_data.createdAt);
+const endDate = new Date("06/30/2022");
+const deltaDate = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+
 export default class App extends React.Component {
   state = {
     sankeyChoices: {
@@ -161,7 +165,8 @@ export default class App extends React.Component {
           "enabled": true
         }
       }
-    }
+    },
+    selectedDate: [startDate, endDate],
   };
 
   sankeyData = [];
@@ -182,10 +187,16 @@ export default class App extends React.Component {
     let focusedStoryTitle = story_data.title;
 
     story_data.neighbors.map((neighbor, idx) => {
+      let value = 0;
+
+      for (let i = 0; i < neighbor.dailyContributingView.length; i++) {
+        value += neighbor.dailyContributingView[i].view;
+      }
+
       tmp_data.push({
         "source": neighbor.title,
         "target": focusedStoryTitle,
-        "value": neighbor.influenceScore,
+        "value": value,
       });
 
       choices_alluvial_nodes += '{ "name": "' + neighbor.title + '", "category": "Neighbor Stories" }';
@@ -215,6 +226,10 @@ export default class App extends React.Component {
     return [tmp_data, tmp_choices];
   }
 
+  convertValue2Date = (value) => {
+    return new Date(startDate.getTime() + Math.round(((deltaDate * value) / 100)) * (1000 * 60 * 60 * 24));
+  }
+
   componentDidMount() {
     // console.log("story_data:", story_data.neighbors.length);
     this.addStoryColor();
@@ -226,20 +241,44 @@ export default class App extends React.Component {
       ...prev,
       sankeyData: this.extractSankeyData()[0],
       sankeyChoices: this.extractSankeyData()[1],
-      // sankeyData: data,
-      // sankeyChoices: this.state.options,
     }));
   }
 
-
   log = (value) => {
-    console.log(value); //eslint-disable-line
+    console.log(value[0], value[1]); //eslint-disable-line
+    this.setState(prev => ({
+      ...prev,
+      selectedDate: [this.convertValue2Date(value[0]), this.convertValue2Date(value[1])],
+    }));
+
+    let tmp_data = [];
+    let focusedStoryTitle = story_data.title;
+    story_data.neighbors.map((neighbor) => {
+      let value = 0;
+
+      for (let i = 0; i < neighbor.dailyContributingView.length; i++) {
+        let contributing_date = new Date(neighbor.dailyContributingView[i].date);
+        if (contributing_date >= this.state.selectedDate[0] && contributing_date <= this.state.selectedDate[1]) {
+          value += neighbor.dailyContributingView[i].view;
+        }
+      }
+
+      tmp_data.push({
+        "source": neighbor.title,
+        "target": focusedStoryTitle,
+        "value": value,
+      });
+    });
+
+    this.setState(prev => ({
+      ...prev,
+      sankeyData: tmp_data,
+    }));
   }
 
-
   render = () => {
-    console.log(this.state.sankeyData)
-    console.log(this.state.sankeyChoices)
+    // console.log(this.state.sankeyData)
+    // console.log(this.state.sankeyChoices)
     return (
       <div style={{ height: '100px', margin: '100px 150px', }}>
         <BarChart
@@ -248,9 +287,10 @@ export default class App extends React.Component {
           vbWidth={width}
           vbHeight={barchartHeight}
           data={story_data}
+          dateRange={this.state.selectedDate}
         />
         <div style={timesliderStyle}>
-          <Slider range allowCross={false} defaultValue={[0, 20]} onChange={this.log} />
+          <Slider range allowCross={false} defaultValue={[0, 100]} onChange={this.log} />
         </div>
         <AlluvialChart
           data={this.state.sankeyData}
