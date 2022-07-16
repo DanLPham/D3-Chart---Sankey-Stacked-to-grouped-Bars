@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import { useD3 } from '../Utilities/useD3';
 
-const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, ...rest }) => {
+const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, ...rest }) => {
 
   // Returns an array of m psuedorandom, smoothly-varying non-negative numbers.
   // Inspired by Lee Byron’s test data generator.
@@ -57,7 +57,7 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, ...rest }
 
   const n = data.neighbors.length + 2; // number of series
 
-  const layout = "stacked";
+  // const layout = "stacked";
 
   const xAxis = svg => svg.append("g")
     .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -70,7 +70,7 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, ...rest }
   // const z = d3.scaleSequential(d3.interpolateGreens)
   //   .domain([-0.5 * n, 1.5 * n])
   // console.log("z:", z)
-  const z = ["#1192e8", "#198038", "#da1e28", "#b28600"]; // Color code
+  const z = ["#1192e8", "#198038", "#da1e28", "#b28600", "#f42891", "#ab3cd2", "#e82ac9"]; // Color code
   const color_gray = "Gainsboro";
 
   // const yz = d3.range(n).map(() => bumps(m)) // the y-values of each of the n series
@@ -179,7 +179,7 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, ...rest }
         .call(xAxis)
         .call(yAxis);
 
-      update(layout, rect);
+      update(mode, rect);
     }, []);
 
   useEffect(() => {
@@ -226,7 +226,7 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, ...rest }
       .call(xAxis)
       .call(yAxis);
 
-    update(layout, rect);
+    update(mode, rect);
   });
 
   return (

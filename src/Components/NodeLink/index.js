@@ -1,24 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { AlluvialChart } from "@carbon/charts-react";
 import Slider from 'rc-slider';
-
 import 'rc-slider/assets/index.css';
-import "@carbon/charts/styles.css";
-// Or
-// import "@carbon/charts/styles/styles.scss";
-
-// IBM Plex should either be imported in your project by using Carbon
-// or consumed manually through an import
-import "./plex-and-carbon-components.css";
 
 import data from './Data/data2.json';
 import story_data from './Data/demodata.json';
+import graph_data from './Data/graph_data.json';
+
 import BarChart from "../BarChart";
+import InfluenceGraph from "./InfluenceGraph";
 
 const width = 1200;
 const barchartHeight = 200;
-const sankeychartHeight = 300;
+const nodelinkHeight = 600;
 
 const timesliderStyle = {
   width: width,
@@ -78,7 +72,7 @@ export default class App extends React.Component {
           // }
         ]
       },
-      "height": sankeychartHeight + "px",
+      "height": nodelinkHeight + "px",
       "width": width + "px",
       "color": {
         "scale": {
@@ -146,7 +140,7 @@ export default class App extends React.Component {
           // }
         ]
       },
-      "height": sankeychartHeight + "px",
+      "height": nodelinkHeight + "px",
       "width": width + "px",
       "color": {
         "scale": {
@@ -214,7 +208,7 @@ export default class App extends React.Component {
     let choices_string = '{ "alluvial": { "nodes": [' +
       '{ "name": "' + story_data.title + '", "category": "Focused Story" }, ' +
       choices_alluvial_nodes +
-      '] }, "height": "' + sankeychartHeight + 'px", ' +
+      '] }, "height": "' + nodelinkHeight + 'px", ' +
       '"width": "' + width + 'px",' +
       '"color": { "scale": {' +
       '"' + story_data.title + '": "' + focusedColor + '", ' +
@@ -237,7 +231,7 @@ export default class App extends React.Component {
     // this.state.sankeyData = this.extractSankeyData()[0];
     // this.state.sankeyChoices = this.extractSankeyData()[1];
     // console.log("data2:", data);
-    console.log("sankey choices:", this.extractSankeyData()[1]);
+    // console.log("sankey choices:", this.extractSankeyData()[1]);
     this.setState(prev => ({
       ...prev,
       sankeyData: this.extractSankeyData()[0],
@@ -290,7 +284,8 @@ export default class App extends React.Component {
 
   render = () => {
     return (
-      <div style={{ height: '100px', margin: '100px 150px', }}>
+      <div style={{ height: '100px', margin: '30px 150px', }}>
+        <div>Influence Network 2.0</div>
         <div onChange={this.onChangeValueRadioBtnBarChart}>
           <input type="radio" value="stacked" name="barchartmode" checked={this.state.selectedRadioOption === "stacked"} /> Stacked
           <input type="radio" value="grouped" name="barchartmode" checked={this.state.selectedRadioOption === "grouped"} /> Grouped
@@ -310,10 +305,16 @@ export default class App extends React.Component {
         <div style={timesliderStyle}>
           <Slider range allowCross={false} defaultValue={[0, 100]} onChange={this.log} />
         </div>
-        <AlluvialChart
-          data={this.state.sankeyData}
-          options={this.state.sankeyChoices}>
-        </AlluvialChart>
+        <InfluenceGraph
+          width={width}
+          height={nodelinkHeight}
+          vbWidth={width}
+          vbHeight={nodelinkHeight}
+          data={graph_data}
+          storyData={story_data}
+          dateRange={this.state.selectedDate}
+          mode={this.state.selectedRadioOption}
+        />
       </div>
     )
   };

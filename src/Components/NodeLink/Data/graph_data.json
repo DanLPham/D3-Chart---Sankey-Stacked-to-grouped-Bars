@@ -1,0 +1,55 @@
+{
+    "focusedId": "Story 2",
+    "nodes": [
+        {
+            "id": "Story 2"
+        },
+        {
+            "id": "Story 321"
+        },
+        {
+            "id": "Story 12"
+        },
+        {
+            "id": "Story 3974"
+        },
+        {
+            "id": "Story 279"
+        },
+        {
+            "id": "Story 842"
+        }
+    ],
+    "links": [
+        {
+            "source": "Story 2",
+            "target": "Story 12",
+            "type": "licensing"
+        },
+        {
+            "source": "Story 3974",
+            "target": "Story 12",
+            "type": "resolved"
+        },
+        {
+            "source": "Story 842",
+            "target": "Story 279",
+            "type": "suit"
+        },
+        {
+            "source": "Story 3974",
+            "target": "Story 842",
+            "type": "licensing"
+        },
+        {
+            "source": "Story 3974",
+            "target": "Story 2",
+            "type": "suit"
+        },
+        {
+            "source": "Story 321",
+            "target": "Story 2",
+            "type": "resolved"
+        }
+    ]
+}
