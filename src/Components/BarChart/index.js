@@ -3,12 +3,7 @@ import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import { useD3 } from '../Utilities/useD3';
 
-const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, colorList, ...rest }) => {
-
-  // Returns an array of m psuedorandom, smoothly-varying non-negative numbers.
-  // Inspired by Lee Byron’s test data generator.
-  // http://leebyron.com/streamgraph/
-
+const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, colorList, hoverId, setNewAction, ...rest }) => {
   const normalizeContributingData = () => {
     const arr = [];
 
@@ -107,12 +102,13 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, col
   const transitionGrouped = (rect) => {
     y.domain([0, yMax]);
 
-    rect.transition()
-      .duration(500)
-      .delay((d, i) => i * 20)
+    rect
+      // .transition()
+      // .duration(500)
+      // .delay((d, i) => i * 20)
       .attr("x", (d, i) => x(i) + x.bandwidth() / n * d[2])
       .attr("width", x.bandwidth() / n)
-      .transition()
+      // .transition()
       .attr("y", d => y(d[1] - d[0]))
       .attr("height", d => y(0) - y(d[1] - d[0]));
   }
@@ -120,12 +116,13 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, col
   const transitionStacked = (rect) => {
     y.domain([0, y1Max]);
 
-    rect.transition()
-      .duration(500)
-      .delay((d, i) => i * 20)
+    rect
+      // .transition()
+      // .duration(500)
+      // .delay((d, i) => i * 20)
       .attr("y", d => y(d[1]))
       .attr("height", d => y(d[0]) - y(d[1]))
-      .transition()
+      // .transition()
       .attr("x", (d, i) => x(i))
       .attr("width", x.bandwidth());
   }
@@ -239,7 +236,62 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, col
       .call(yAxis);
 
     update(mode, rect);
-  });
+  }, [dateRange, mode]);
+
+  useEffect(() => {
+    if (hoverId !== undefined) {
+      let hover_id_ordered = 0;
+
+      if (hoverId === "other-sources") {
+        hover_id_ordered = 1;
+      }
+      
+      if (hoverId !== 0) {
+        let hover_id_number = hoverId.split('-').pop();
+        data.neighbors.map((neighbor, idx) => {
+          if (neighbor.id === hover_id_number) hover_id_ordered = idx + 2;
+        });
+      }
+
+      let svg = d3.select("#barchart");
+      svg.selectAll("g").remove();
+
+      svg
+        .attr("height", height)
+        .attr("width", width)
+        .attr("viewBox", [0, 0, vbWidth, vbHeight])
+        .attr("id", "barchart");
+
+      var rect = svg.selectAll("g")
+        .data(y01z)
+        .join("g")
+        // .attr("fill", (d, i) => z(i))
+        .attr("fill", (d, i) => {
+          if (hover_id_ordered === 0) {
+            return z[i-1];
+          }
+
+          if (i !== hover_id_ordered) {
+            return color_gray;
+          } else {
+            return z[i-1];
+          }
+        })
+        .selectAll("rect")
+        .data(d => d)
+        .join("rect")
+        .attr("x", (d, i) => x(i))
+        .attr("y", height - margin.bottom)
+        .attr("width", x.bandwidth())
+        .attr("height", 0);
+
+      svg.append("g")
+        .call(xAxis)
+        .call(yAxis);
+
+      update(mode, rect);
+    }
+  }, [hoverId]);
 
   return (
     <svg

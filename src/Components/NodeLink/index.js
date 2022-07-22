@@ -163,6 +163,8 @@ export default class App extends React.Component {
     },
     selectedDate: [startDate, endDate],
     selectedRadioOption: "stacked",
+    action: "",
+    hoverId: 0,
   };
 
   sankeyData = [];
@@ -283,10 +285,33 @@ export default class App extends React.Component {
     }));
   }
 
+  setHoverStory = (storyId) => {
+    this.setState(prev => ({
+      ...prev,
+      action: "Hover on " + storyId,
+      hoverId: storyId,
+    }));
+  }
+
+  setClickedStory = (storyId) => {
+    this.setState(prev => ({
+      ...prev,
+      action: "Click on " + storyId,
+    }));
+  }
+
+  setNewAction = (new_action) => {
+    this.setState(prev => ({
+      ...prev,
+      action: new_action,
+    }));
+  }
+
   render = () => {
     return (
       <div style={{ height: '100px', margin: '30px 150px', }}>
         <div>Influence Network 2.0 - Which stories influence the current story?</div>
+        <div><u>Current action</u>: {this.state.action}</div>
         <div style={{ height: '10px' }}></div>
         <div>Daily View mode:</div>
         <div onChange={this.onChangeValueRadioBtnBarChart}>
@@ -305,11 +330,14 @@ export default class App extends React.Component {
           dateRange={this.state.selectedDate}
           mode={this.state.selectedRadioOption}
           colorList={colorList}
+          hoverId={this.state.hoverId}
+          setNewAction={this.setNewAction}
         />
         <div style={timesliderStyle}>
           <Slider range allowCross={false} defaultValue={[0, 100]} onChange={this.log} />
         </div>
-        <ColorSwatches width={width} height={50}/>
+        <div style={{ height: '10px' }}></div>
+        <ColorSwatches width={width} height={30}/>
         <InfluenceGraph
           width={width}
           height={nodelinkHeight}
@@ -320,6 +348,8 @@ export default class App extends React.Component {
           dateRange={this.state.selectedDate}
           mode={this.state.selectedRadioOption}
           colorList={colorList}
+          setHoverStory={this.setHoverStory}
+          setClickedStory={this.setClickedStory}
         />
       </div>
     )

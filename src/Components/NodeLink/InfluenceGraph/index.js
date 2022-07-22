@@ -10,7 +10,7 @@ import {
   getIdNumberFromId,
 } from './utils';
 
-const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange, mode, colorList, ...rest }) => {
+const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange, mode, colorList, setHoverStory, setClickedStory, ...rest }) => {
   const types = ["contributing", "receiving", "GKRsimilarity"];
   const GKR_similarity_scores = [5324, 1231, 2542, 3241, 4212, 943];
   const img_src = [
@@ -279,7 +279,8 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         });
 
       node.on('click', event => {
-        console.log("Redirecting to " + event.srcElement.parentElement.id);
+        // console.log("Redirecting to " + event.srcElement.parentElement.id);
+        setClickedStory(event.srcElement.parentElement.id);
         // showStoryInfoBox(event.srcElement.parentElement.id);
       });
 
@@ -295,11 +296,12 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
           .select('text')
           .attr("stroke", "orange");
         showStoryInfoBox(event.srcElement.parentElement.id);
+        setHoverStory(event.srcElement.parentElement.id);
       });
 
       node.on('mouseleave', event => {
-        console.log(event.srcElement)
-        console.log("Leave " + event.srcElement.id);
+        // console.log(event.srcElement)
+        // console.log("Leave " + event.srcElement.id);
         d3.select(event.srcElement)
           .raise()
           .select('circle')
@@ -312,6 +314,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
             return "white";
           });
         hideStoryInfoBox();
+        setHoverStory(0);
       });
 
       simulation.on("tick", () => {
@@ -352,7 +355,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         .style('font-size', '12px');
 
       const showStoryInfoBox = (storyId) => {
-        console.log("showStoryInfoBox", storyId);
+        // console.log("showStoryInfoBox", storyId);
 
         var img_width = 300;
         var img_height = 100;
