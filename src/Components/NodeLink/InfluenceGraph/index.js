@@ -14,7 +14,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
   const types = ["contributing", "receiving", "GKRsimilarity"];
   const GKR_similarity_scores = [5324, 1231, 2542, 3241, 4212, 943];
   const img_src = [
-    "http://csda-csdad-1igddp6r9gj56-1926184173.us-west-2.elb.amazonaws.com/static/globe_west_2048_0.jpg",
+    "https://d2pn8kiwq2w21t.cloudfront.net/images/jpegPIA24937.width-1320.jpg",
     "https://www.sierraclub.org/sites/www.sierraclub.org/files/styles/sierra_full_page_width/public/slideshows/slide3.jpg?itok=g5BxckFW",
     "https://www.opodo.co.uk/blog/wp-content/uploads/sites/12/2018/11/natural-phenomena-6-720x480.jpg",
     "https://images.tpn.to/mr/es/kl/pt/content.jpg",
