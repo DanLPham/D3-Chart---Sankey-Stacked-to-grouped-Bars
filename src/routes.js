@@ -2,7 +2,7 @@
 import { Navigate } from 'react-router-dom';
 // import InfluenceNetwork from './Components/InfluenceNetwork';
 // import AttentionFlow from './Components/AttentionFlow';
-// import Sankey from './Components/Sankey';
+import Sankey from './Components/Sankey';
 import NodeLink from './Components/NodeLink';
 
 const routes = [

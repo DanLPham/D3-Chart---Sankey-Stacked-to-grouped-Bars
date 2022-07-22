@@ -9,6 +9,7 @@ import graph_data from './Data/graph_data.json';
 
 import BarChart from "../BarChart";
 import InfluenceGraph from "./InfluenceGraph";
+import ColorSwatches from "./ColorSwatches";
 
 const width = 1200;
 const barchartHeight = 200;
@@ -18,7 +19,7 @@ const timesliderStyle = {
   width: width,
 };
 
-const colorList = ["#b28600", "#da1e28", "#198038", "#ee538b"];
+const colorList = ["#1192e8", "#198038", "#da1e28", "#b28600", "#f42891", "#ab3cd2", "#e2ba39", "CornFlowerBlue"];
 const focusedColor = "#1192e8";
 
 const startDate = new Date(story_data.createdAt);
@@ -285,7 +286,9 @@ export default class App extends React.Component {
   render = () => {
     return (
       <div style={{ height: '100px', margin: '30px 150px', }}>
-        <div>Influence Network 2.0</div>
+        <div>Influence Network 2.0 - Which stories influence the current story?</div>
+        <div style={{ height: '10px' }}></div>
+        <div>Daily View mode:</div>
         <div onChange={this.onChangeValueRadioBtnBarChart}>
           <input type="radio" value="stacked" name="barchartmode" checked={this.state.selectedRadioOption === "stacked"} /> Stacked
           <input type="radio" value="grouped" name="barchartmode" checked={this.state.selectedRadioOption === "grouped"} /> Grouped
@@ -301,10 +304,12 @@ export default class App extends React.Component {
           data={story_data}
           dateRange={this.state.selectedDate}
           mode={this.state.selectedRadioOption}
+          colorList={colorList}
         />
         <div style={timesliderStyle}>
           <Slider range allowCross={false} defaultValue={[0, 100]} onChange={this.log} />
         </div>
+        <ColorSwatches width={width} height={50}/>
         <InfluenceGraph
           width={width}
           height={nodelinkHeight}
@@ -314,6 +319,7 @@ export default class App extends React.Component {
           storyData={story_data}
           dateRange={this.state.selectedDate}
           mode={this.state.selectedRadioOption}
+          colorList={colorList}
         />
       </div>
     )

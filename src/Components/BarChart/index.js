@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import { useD3 } from '../Utilities/useD3';
 
-const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, ...rest }) => {
+const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, colorList, ...rest }) => {
 
   // Returns an array of m psuedorandom, smoothly-varying non-negative numbers.
   // Inspired by Lee Byron’s test data generator.
@@ -51,7 +51,7 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, ...
     return arr;
   }
 
-  const margin = ({ top: 0, right: 0, bottom: 10, left: 0 });
+  const margin = ({ top: 0, right: 0, bottom: 20, left: 0 });
 
   const m = Math.ceil((new Date("06/30/2022") - new Date(data.createdAt)) / (1000 * 60 * 60 * 24)) + 1; // number of values per series
 
@@ -61,7 +61,11 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, ...
 
   const xAxis = svg => svg.append("g")
     .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(x).tickSizeOuter(0).tickFormat(() => ""))
+    .call(d3.axisBottom(pre_xAxis).tickSizeOuter(0).tickFormat((d) => {
+      let date = new Date(d);
+      // console.log(d);
+      return date.toLocaleString('default', { month: 'short' }) + " " + date.getDate();
+    }))
 
   const yAxis = svg => svg.append("g")
     .attr("transform", `translate(5,0)`)
@@ -95,6 +99,10 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, ...
     .domain(xz)
     .rangeRound([margin.left, width - margin.right])
     .padding(0.08);
+
+  var pre_xAxis = d3.scaleUtc()
+    .domain([new Date(data.createdAt), new Date("06/30/2022")])
+    .range([margin.left, width - margin.right - 10]);
 
   const transitionGrouped = (rect) => {
     y.domain([0, yMax]);
@@ -193,6 +201,10 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, ...
       .domain(xz)
       .rangeRound([margin.left, width - margin.right])
       .padding(0.08);
+
+    pre_xAxis = d3.scaleUtc()
+      .domain([new Date(data.createdAt), new Date("06/30/2022")])
+      .range([margin.left, width - margin.right - 10]);
 
     let svg = d3.select("#barchart");
     svg.selectAll("g").remove();
