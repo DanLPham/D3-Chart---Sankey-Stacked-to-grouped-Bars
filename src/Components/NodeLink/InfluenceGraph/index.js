@@ -10,7 +10,7 @@ import {
   getIdNumberFromId,
 } from './utils';
 
-const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange, mode, colorList, setHoverStory, setClickedStory, ...rest }) => {
+const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange, mode, colorNode, colorLink, setHoverStory, setClickedStory, ...rest }) => {
   const types = ["contributing", "receiving", "GKRsimilarity"];
   const GKR_similarity_scores = [5324, 1231, 2542, 3241, 4212, 943];
   const img_src = [
@@ -74,8 +74,6 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
 
   const ref = useD3(
     (svg) => {
-      const color = d3.scaleOrdinal(types, d3.schemeCategory10);
-
       chart_xScale_minimum = convert2Epoch(new Date(storyData.createdAt));
       chart_xScale_maximum = convert2Epoch(new Date('06/30/2022'));
 
@@ -159,7 +157,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         .attr("markerHeight", 5)
         .attr("orient", "auto")
         .append("path")
-        .attr("fill", color)
+        .attr("fill", (d, i) => colorLink[i])
         .attr("d", "M0,-5L10,0L0,5");
 
       const link = svg.append("g")
@@ -174,7 +172,12 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
           let target_id = d.target.id.split(' ').pop();
           return `link-${source_id}-${target_id}`
         })
-        .attr("stroke", d => color(d.type))
+        .attr("stroke", d => {
+          if (d.type === types[0]) return colorLink[0];
+          if (d.type === types[1]) return colorLink[1];
+          if (d.type === types[2]) return colorLink[2];
+          return colorLink[0];
+        })
         .attr("marker-end", d => {
           // console.log("d:", d);
           if (d.type === "GKRsimilarity") return '';
@@ -199,53 +202,54 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         });
 
       node.append("circle")
+        .attr("class", "circle-color")
         .attr("fill", d => {
-          if (d.id === focusedId) return "yellow";
-          if (d.id === "Story 321") return colorList[1];
-          if (d.id === "Story 12") return colorList[2];
-          if (d.id === "Story 3974") return colorList[3];
-          if (d.id === "Story 279") return colorList[4];
-          if (d.id === "Story 842") return colorList[5];
-          return colorList[colorList.length - 1];
+          if (d.id === focusedId) return colorNode[colorNode.length - 1];
+          if (d.id === "Story 321") return colorNode[1];
+          if (d.id === "Story 12") return colorNode[2];
+          if (d.id === "Story 3974") return colorNode[3];
+          if (d.id === "Story 279") return colorNode[4];
+          if (d.id === "Story 842") return colorNode[5];
+          return colorNode[0];
         })
         .attr("r", d => {
           if (d.id === focusedId) return 43;
           return `${d.totalView / 50000000}`;
         });
 
-      node.append("defs")
-        .append("clipPath")
-        .attr("id", d => `circleimg-story-${getIdNumberFromId(d.id)}`)
-        .append("circle")
-        .attr("cx", d => `300`)
-        .attr("cy", d => `75`)
-        .attr("r", d => {
-          if (d.id === focusedId) return 40;
-          return `${d.totalView / 50000000 - 5}`;
-        })
-        .attr("fill");
+      // node.append("defs")
+      //   .append("clipPath")
+      //   .attr("id", d => `circleimg-story-${getIdNumberFromId(d.id)}`)
+      //   .append("circle")
+      //   .attr("cx", d => `300`)
+      //   .attr("cy", d => `75`)
+      //   .attr("r", d => {
+      //     if (d.id === focusedId) return 40;
+      //     return `${d.totalView / 50000000 - 5}`;
+      //   })
+      //   .attr("fill");
 
-      node.append("image")
-        .attr("xlink:href", d => {
-          if (d.id === focusedId) return img_src[0];
-          if (d.id === "Story 321") return img_src[1];
-          if (d.id === "Story 12") return img_src[2];
-          if (d.id === "Story 3974") return img_src[3];
-          if (d.id === "Story 279") return img_src[0];
-          if (d.id === "Story 842") return img_src[1];
-        })
-        .attr("clip-path", d => `url(#circleimg-story-${getIdNumberFromId(d.id)})`)
-        .attr("width", () => {
-          let current_img = new Image();
-          current_img.src = img_src;
-          // console.log(current_img.width, current_img.height);
-          // return scaleImage()
-          return "500";
-        })
-        .attr("height", "150")
-        .attr("style", d => {
-          return `transform: translate(-300px,-75px);`
-        });
+      // node.append("image")
+      //   .attr("xlink:href", d => {
+      //     if (d.id === focusedId) return img_src[0];
+      //     if (d.id === "Story 321") return img_src[1];
+      //     if (d.id === "Story 12") return img_src[2];
+      //     if (d.id === "Story 3974") return img_src[3];
+      //     if (d.id === "Story 279") return img_src[0];
+      //     if (d.id === "Story 842") return img_src[1];
+      //   })
+      //   .attr("clip-path", d => `url(#circleimg-story-${getIdNumberFromId(d.id)})`)
+      //   .attr("width", () => {
+      //     let current_img = new Image();
+      //     current_img.src = img_src;
+      //     // console.log(current_img.width, current_img.height);
+      //     // return scaleImage()
+      //     return "500";
+      //   })
+      //   .attr("height", "150")
+      //   .attr("style", d => {
+      //     return `transform: translate(-300px,-75px);`
+      //   });
 
       node.append("text")
         .attr("x", 17)
@@ -295,8 +299,49 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
           .raise()
           .select('text')
           .attr("stroke", "orange");
-        showStoryInfoBox(event.srcElement.parentElement.id);
-        setHoverStory(event.srcElement.parentElement.id);
+        // showStoryInfoBox(event.srcElement.parentElement.id);
+
+        let current_color = d3.select(event.srcElement.parentElement).select(".circle-color").attr("fill");
+        let current_id = event.srcElement.parentElement.id;
+        let current_imgSrc = img_src[3];
+        if (current_id === "story-2") current_imgSrc = img_src[0];
+        if (current_id === "story-321") current_imgSrc = img_src[1];
+        if (current_id === "story-12") current_imgSrc = img_src[2];
+        if (current_id === "story-3974") current_imgSrc = img_src[3];
+        if (current_id === "story-279") current_imgSrc = img_src[0];
+        if (current_id === "story-842") current_imgSrc = img_src[1];
+
+        if (current_id === focusedId.replace(' ', '-').toLowerCase()) {
+          setHoverStory(current_id, {
+            title: storyData.title,
+            imgSrc: current_imgSrc,
+            totalViews: storyData.totalView,
+            createdAt: storyData.createdAt,
+            keywords: storyData.keywords,
+            gkrSimilarityScore: -1,
+            contributingViews: -1,
+            receivedViews: -1,
+            color: current_color,
+          });
+        } else if (current_id === "other-sources") {
+          setHoverStory(current_id, {});
+        } else {
+          storyData.neighbors.map(neighbor => {
+            if (neighbor.id === current_id.split('-').pop()) {
+              setHoverStory(current_id, {
+                title: neighbor.title,
+                imgSrc: current_imgSrc,
+                totalViews: neighbor.totalView,
+                createdAt: neighbor.createdAt,
+                keywords: neighbor.keywords,
+                gkrSimilarityScore: 52354235,
+                contributingViews: 23423,
+                receivedViews: 234234,
+                color: current_color,
+              });
+            }
+          });
+        }
       });
 
       node.on('mouseleave', event => {
@@ -313,8 +358,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
             if (d.id === focusedId) return "yellow";
             return "white";
           });
-        hideStoryInfoBox();
-        setHoverStory(0);
+        // hideStoryInfoBox();
       });
 
       simulation.on("tick", () => {
@@ -444,7 +488,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         svg.select('image#otherInfobox')
           .attr("xlink:href", "");
 
-          svg.select('text#otherInfobox')
+        svg.select('text#otherInfobox')
           .attr('display', 'none');
       }
 

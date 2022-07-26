@@ -10,17 +10,21 @@ import graph_data from './Data/graph_data.json';
 import BarChart from "../BarChart";
 import InfluenceGraph from "./InfluenceGraph";
 import ColorSwatches from "./ColorSwatches";
+import InfluenceBarChart from "./InfluenceBarChart";
+import StoryInformation from "./StoryInformation";
+import KeywordTree from "./KeywordTree";
 
 const width = 1200;
 const barchartHeight = 200;
-const nodelinkHeight = 600;
+const nodelinkHeight = 550;
 
 const timesliderStyle = {
   width: width,
 };
 
-const colorList = ["#1192e8", "#198038", "#da1e28", "#b28600", "#f42891", "#ab3cd2", "#e2ba39", "CornFlowerBlue"];
-const focusedColor = "#1192e8";
+const colorNode = ["#D9D1B0", "#E07A5F", "#8F5D5D", "#3D405B", "#5F797B", "#69C7C4", "#81B29A", "#F0CC4C"];
+const colorLink = ["#646BE7", "#CB273D", "#7DA81E"];
+const focusedColor = "#F4F1DE";
 
 const startDate = new Date(story_data.createdAt);
 const endDate = new Date("06/30/2022");
@@ -165,6 +169,7 @@ export default class App extends React.Component {
     selectedRadioOption: "stacked",
     action: "",
     hoverId: 0,
+    storyInfo: {},
   };
 
   sankeyData = [];
@@ -172,7 +177,7 @@ export default class App extends React.Component {
 
   addStoryColor = () => {
     for (let i = 0; i < story_data.neighbors.length; i++) {
-      this.state.options.color.scale[story_data.neighbors[i].title] = colorList[i];
+      this.state.options.color.scale[story_data.neighbors[i].title] = colorNode[i];
     }
   }
 
@@ -201,7 +206,7 @@ export default class App extends React.Component {
       if (idx < story_data.neighbors.length - 1) {
         choices_alluvial_nodes += ', ';
       }
-      choices_color_scale += '"' + neighbor.title + '": "' + colorList[idx] + '"';
+      choices_color_scale += '"' + neighbor.title + '": "' + colorNode[idx] + '"';
       if (idx < story_data.neighbors.length - 1) {
         choices_color_scale += ', ';
       }
@@ -285,12 +290,29 @@ export default class App extends React.Component {
     }));
   }
 
-  setHoverStory = (storyId) => {
+  setHoverStory = (storyId, storyInfo) => {
     this.setState(prev => ({
       ...prev,
       action: "Hover on " + storyId,
       hoverId: storyId,
     }));
+
+    if (storyId !== "other-sources") {
+      this.setState(prev => ({
+        ...prev,
+        storyInfo: {
+          title: storyInfo.title,
+          imgSrc: storyInfo.imgSrc,
+          totalViews: storyInfo.totalViews,
+          createdAt: storyInfo.createdAt,
+          keywords: storyInfo.keywords,
+          gkrSimilarityScore: storyInfo.gkrSimilarityScore,
+          contributingViews: storyInfo.contributingViews,
+          receivedViews: storyInfo.receivedViews,
+          color: storyInfo.color,
+        },
+      }));
+    }
   }
 
   setClickedStory = (storyId) => {
@@ -309,7 +331,7 @@ export default class App extends React.Component {
 
   render = () => {
     return (
-      <div style={{ height: '100px', margin: '30px 150px', }}>
+      <div style={{ height: '100px', margin: '20px 150px', }}>
         <div>Influence Network 2.0 - Which stories influence the current story?</div>
         <div><u>Current action</u>: {this.state.action}</div>
         <div style={{ height: '10px' }}></div>
@@ -329,28 +351,66 @@ export default class App extends React.Component {
           data={story_data}
           dateRange={this.state.selectedDate}
           mode={this.state.selectedRadioOption}
-          colorList={colorList}
+          colorNode={colorNode}
           hoverId={this.state.hoverId}
           setNewAction={this.setNewAction}
         />
         <div style={timesliderStyle}>
           <Slider range allowCross={false} defaultValue={[0, 100]} onChange={this.log} />
         </div>
+
         <div style={{ height: '10px' }}></div>
-        <ColorSwatches width={width} height={30}/>
-        <InfluenceGraph
-          width={width}
-          height={nodelinkHeight}
-          vbWidth={width}
-          vbHeight={nodelinkHeight}
-          data={graph_data}
-          storyData={story_data}
-          dateRange={this.state.selectedDate}
-          mode={this.state.selectedRadioOption}
-          colorList={colorList}
-          setHoverStory={this.setHoverStory}
-          setClickedStory={this.setClickedStory}
-        />
+
+        <div style={{
+          height: nodelinkHeight + 30,
+          width: width * 3 / 5,
+          position: 'fixed',
+          left: 150,
+        }}>
+          <ColorSwatches width={width / 2} height={30} colorLink={colorLink} />
+          <InfluenceGraph
+            width={width * 3 / 5}
+            height={nodelinkHeight}
+            vbWidth={width}
+            vbHeight={nodelinkHeight}
+            data={graph_data}
+            storyData={story_data}
+            dateRange={this.state.selectedDate}
+            mode={this.state.selectedRadioOption}
+            colorNode={colorNode}
+            colorLink={colorLink}
+            setHoverStory={this.setHoverStory}
+            setClickedStory={this.setClickedStory}
+          />
+        </div>
+
+        <div style={{
+          height: nodelinkHeight + 30,
+          width: width * 2 / 5,
+          position: 'fixed',
+          left: 150 + width * 3 / 5,
+        }}>
+          <div style={{ width: '100%', height: nodelinkHeight / 2 + 40, }}>
+            <StoryInformation storyInfo={this.state.storyInfo} />
+          </div>
+          <div style={{
+            width: '100%',
+            height: nodelinkHeight / 2 - 10,
+            backgroundColor: '#F4F7E5',
+          }}>
+            <div style={{ padding: '10px 15px', }}>
+              <div style={{ color: "#6D734F", fontWeight: 'bold', fontSize: '1rem', }}>
+                Keyword Hierarchy {this.state.storyInfo.title ? 'between Story 2 and' : ''} {this.state.storyInfo.title}
+              </div>
+            </div>
+            <KeywordTree
+              width={width * 2 / 5}
+              height={nodelinkHeight / 2 - 10}
+            />
+          </div>
+        </div>
+
+        {/* <InfluenceBarChart /> */}
       </div>
     )
   };

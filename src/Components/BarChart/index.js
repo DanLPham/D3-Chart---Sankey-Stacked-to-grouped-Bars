@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import { useD3 } from '../Utilities/useD3';
 
-const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, colorList, hoverId, setNewAction, ...rest }) => {
+const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, colorNode, hoverId, setNewAction, ...rest }) => {
   const normalizeContributingData = () => {
     const arr = [];
 
@@ -69,8 +69,8 @@ const BarChart = ({ width, height, vbWidth, vbHeight, data, dateRange, mode, col
   // const z = d3.scaleSequential(d3.interpolateGreens)
   //   .domain([-0.5 * n, 1.5 * n])
   // console.log("z:", z)
-  const z = ["#1192e8", "#198038", "#da1e28", "#b28600", "#f42891", "#ab3cd2", "#e82ac9"]; // Color code
-  const color_gray = "Gainsboro";
+  const z = ["#D9D1B0", "#E07A5F", "#8F5D5D", "#3D405B", "#5F797B", "#69C7C4", "#81B29A", "#F0CC4C"]; // Color code
+  const color_gray = "#EEEEEE";
 
   // const yz = d3.range(n).map(() => bumps(m)) // the y-values of each of the n series
   // const yz = new_yz;

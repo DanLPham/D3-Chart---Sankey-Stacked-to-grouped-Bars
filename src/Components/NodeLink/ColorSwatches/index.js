@@ -3,13 +3,11 @@ import ReactDOM from "react-dom";
 import * as d3 from "d3";
 import { useD3 } from '../../Utilities/useD3';
 
-const InfluenceGraph = ({ width, height, vbWidth, vbHeight, ...rest }) => {
+const InfluenceGraph = ({ width, height, vbWidth, vbHeight, colorLink, ...rest }) => {
   const types = ["contributing view", "receiving view", "GKR similarity"];
 
   const ref = useD3(
     (svg) => {
-      const color = d3.scaleOrdinal(types, d3.schemeCategory10);
-
       svg.attr("height", height)
         .attr("width", width)
         .attr("viewBox", [-20, -height / 2, width, height])
@@ -29,7 +27,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, ...rest }) => {
         .attr("y1", 0)
         .attr("x2", 25)
         .attr("y2", 0)
-        .attr("style", (type, idx) => `stroke:${color(type)};stroke-width:3;`);
+        .attr("style", (type, idx) => `stroke:${colorLink[idx]};stroke-width:3;`);
 
       colorSwatches
         .append("text")
