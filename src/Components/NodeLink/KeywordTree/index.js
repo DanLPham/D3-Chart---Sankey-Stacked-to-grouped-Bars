@@ -47,7 +47,12 @@ const KeywordTree = ({ width, height, vbWidth, vbHeight, ...rest }) => {
         ]
       },
       {
-        name: "Keyword 4",
+        name: "f",
+        children: [
+          {
+            name: "Keyword 4",
+          }
+        ]
       }
     ],
   }

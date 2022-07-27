@@ -237,7 +237,7 @@ export default class App extends React.Component {
     // this.state.sankeyData = this.extractSankeyData()[0];
     // this.state.sankeyChoices = this.extractSankeyData()[1];
     // console.log("data2:", data);
-    console.log("sankey choices:", this.extractSankeyData()[1]);
+    // console.log("sankey choices:", this.extractSankeyData()[1]);
     this.setState(prev => ({
       ...prev,
       sankeyData: this.extractSankeyData()[0],

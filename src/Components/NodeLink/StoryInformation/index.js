@@ -6,10 +6,10 @@ const StoryInformation = ({ width, height, storyInfo, ...rest }) => {
   }, [storyInfo]);
 
   const field_name_width = 150 + 'px';
+  const subfield_margin_left = 30 + 'px';
   const text_color = '#1E757F';
 
   const bg_color = "rgba('" + storyInfo.color + "', 0.5)";
-  console.log(bg_color)
 
   return (
     <div style={{ backgroundColor: bg_color, width: '100%', height: '100%', }}>
@@ -17,11 +17,17 @@ const StoryInformation = ({ width, height, storyInfo, ...rest }) => {
         {storyInfo.totalViews ?
           <div>
             <a href="#">
-              <img src={storyInfo.imgSrc} width='100%' height='100px' style={{ objectFit: 'cover' }} />
+              <img src={storyInfo.imgSrc} width='100%' height='80px' style={{ objectFit: 'cover' }} />
             </a>
             <div style={{ height: '10px', backgroundColor: storyInfo.color, }} />
             <div style={{ height: '10px', }} />
-            <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: text_color, }}>{storyInfo.title}</div>
+            <div style={{
+              fontSize: '1.75rem',
+              fontWeight: 'bold',
+              color: storyInfo.color,
+            }}>
+              {storyInfo.title}
+            </div>
             <div style={{ height: '3px', }} />
             <a href="#">
               <button style={{
@@ -41,6 +47,10 @@ const StoryInformation = ({ width, height, storyInfo, ...rest }) => {
             </a>
             <div style={{ height: '5px', }} />
             <div>
+              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>Author:</div>
+              <div style={{ display: 'inline-block', }}>{storyInfo.author}</div>
+            </div>
+            <div>
               <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>Total views:</div>
               <div style={{ display: 'inline-block', }}>{storyInfo.totalViews}</div>
             </div>
@@ -52,16 +62,21 @@ const StoryInformation = ({ width, height, storyInfo, ...rest }) => {
               <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>Keywords:</div>
               <div style={{ display: 'inline-block', }}>{storyInfo.keywords.join(', ')}</div>
             </div>
+
             <div>
-              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>GKR similarity score:</div>
+              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>Influence score:</div>
+              <div style={{ display: 'inline-block', }}>{storyInfo.influenceScore}</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, marginLeft: subfield_margin_left, }}>GKR similarity score:</div>
               <div style={{ display: 'inline-block', }}>{storyInfo.gkrSimilarityScore}</div>
             </div>
             <div>
-              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>Contributing views:</div>
+              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, marginLeft: subfield_margin_left, }}>Contributing views:</div>
               <div style={{ display: 'inline-block', }}>{storyInfo.contributingViews}</div>
             </div>
             <div>
-              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, }}>Received views:</div>
+              <div style={{ fontWeight: 'bold', color: text_color, display: 'inline-block', width: field_name_width, marginLeft: subfield_margin_left, }}>Received views:</div>
               <div style={{ display: 'inline-block', }}>{storyInfo.receivedViews}</div>
             </div>
           </div>

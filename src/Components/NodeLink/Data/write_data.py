@@ -22,7 +22,7 @@ def generate_daily_contributing_view ():
     write_to_file(5, "view", random.randint(0, 999999), False)
     f.write("\n\t\t\t\t}")
 
-    start_date = datetime.date(2022, 5, 26)
+    start_date = datetime.date(2022, 5, 31)
     end_date = datetime.date(2022, 6, 30)
     for single_date in daterange(start_date, end_date):
         f.write(",\n\t\t\t\t{\n")
@@ -61,17 +61,17 @@ def write_array_to_file (level, attr_name, attr_arr_value, is_first):
         f.write("\t")
     f.write("]")
 
-f = open("src/Components/Sankey/Data/demodata.json", "w")
+f = open("src/Components/NodeLink/Data/demodata_story321.json", "w")
 f.write("{\n")
 
-write_to_file(1, "id", "2", True)
-write_to_file(1, "title", "Story 2", False)
-write_to_file(1, "author", "CSDAP", False)
-write_to_file(1, "totalView", 1422574920, False)
-write_array_to_file(1, "keywords", ["Keyword 1", "Keyword 2", "Keyword 3"], False)
-write_to_file(1, "createdAt", date_to_epoch_unix(2022, 5, 25), False) # Need to be fixed
+write_to_file(1, "id", "321", True)
+write_to_file(1, "title", "Story 321", False)
+write_to_file(1, "author", "ASJBFS", False)
+write_to_file(1, "totalView", 2142444235, False)
+write_array_to_file(1, "keywords", ["Keyword 4", "Keyword 2", "Keyword 7"], False)
+write_to_file(1, "createdAt", date_to_epoch_unix(2022, 5, 31), False) # Need to be fixed
 
-dailyView = generate_daily_view(datetime.datetime(2022, 5, 25), datetime.datetime(2022, 6, 30))
+dailyView = generate_daily_view(datetime.datetime(2022, 5, 31), datetime.datetime(2022, 6, 30))
 # print(dailyView)
 write_array_to_file(1, "dailyView", dailyView, False) # Need to add a proper array
 
@@ -79,12 +79,12 @@ write_array_to_file(1, "dailyView", dailyView, False) # Need to add a proper arr
 f.write(",\n\t\"neighbors\": [\n")
 
 f.write("\t\t{\n")
-write_to_file(3, "id", "321", True)
-write_to_file(3, "title", "Story 321", False)
-write_to_file(3, "author", "ASJBFS", False)
-write_to_file(3, "totalView", 214234235, False)
-write_array_to_file(3, "keywords", ["Keyword 4", "Keyword 2", "Keyword 7"], False)
-write_to_file(3, "createdAt", date_to_epoch_unix(2022, 5, 31), False) # Need to be fixed
+write_to_file(3, "id", "2", True)
+write_to_file(3, "title", "Story 2", False)
+write_to_file(3, "author", "CSDAP", False)
+write_to_file(3, "totalView", 1422474920, False)
+write_array_to_file(3, "keywords", ["Keyword 1", "Keyword 2", "Keyword 3"], False)
+write_to_file(3, "createdAt", date_to_epoch_unix(2022, 5, 26), False) # Need to be fixed
 write_to_file(3, "influenceScore", random.randint(1000, 99999), False)
 
 f.write(",\n\t\t\t\"dailyContributingView\": [\n")
@@ -112,12 +112,12 @@ f.write("\n\t\t}")
 
 # Story #3
 f.write(",\n\t\t{\n")
-write_to_file(3, "id", "3974", True)
-write_to_file(3, "title", "Story 3974", False)
-write_to_file(3, "author", "AHCRJBG", False)
-write_to_file(3, "totalView", 7533523532, False)
-write_array_to_file(3, "keywords", ["Keyword 2", "Keyword 8", "Keyword 6"], False)
-write_to_file(3, "createdAt", date_to_epoch_unix(2022, 4, 17), False) # Need to be fixed
+write_to_file(3, "id", "703", True)
+write_to_file(3, "title", "Story 703", False)
+write_to_file(3, "author", "307", False)
+write_to_file(3, "totalView", 512742345, False)
+write_array_to_file(3, "keywords", ["Keyword 3", "Keyword 9", "Keyword 14"], False)
+write_to_file(3, "createdAt", date_to_epoch_unix(2022, 3, 26), False) # Need to be fixed
 write_to_file(3, "influenceScore", random.randint(1000, 99999), False)
 
 f.write(",\n\t\t\t\"dailyContributingView\": [\n")
@@ -146,12 +146,12 @@ f.write("\n\t\t}")
 
 # Story #5
 f.write(",\n\t\t{\n")
-write_to_file(3, "id", "842", True)
-write_to_file(3, "title", "Story 842", False)
-write_to_file(3, "author", "hello", False)
-write_to_file(3, "totalView", random.randint(1000, 99999), False)
-write_array_to_file(3, "keywords", ["Keyword 12", "Keyword 10", "Keyword 3"], False)
-write_to_file(3, "createdAt", date_to_epoch_unix(2022, 5, 10), False) # Need to be fixed
+write_to_file(3, "id", "610", True)
+write_to_file(3, "title", "Story 610", False)
+write_to_file(3, "author", "Today", False)
+write_to_file(3, "totalView", 63242343, False)
+write_array_to_file(3, "keywords", ["Keyword 12", "Keyword 4", "Keyword 13"], False)
+write_to_file(3, "createdAt", date_to_epoch_unix(2022, 6, 10), False) # Need to be fixed
 write_to_file(3, "influenceScore", random.randint(1000, 99999), False)
 
 f.write(",\n\t\t\t\"dailyContributingView\": [\n")

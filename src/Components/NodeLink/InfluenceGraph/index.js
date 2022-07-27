@@ -10,7 +10,7 @@ import {
   getIdNumberFromId,
 } from './utils';
 
-const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange, mode, colorNode, colorLink, setHoverStory, setClickedStory, ...rest }) => {
+const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, story321_data, dateRange, mode, colorNode, colorLink, setHoverStory, setClickedStory, ...rest }) => {
   const types = ["contributing", "receiving", "GKRsimilarity"];
   const GKR_similarity_scores = [5324, 1231, 2542, 3241, 4212, 943];
   const img_src = [
@@ -286,6 +286,11 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         // console.log("Redirecting to " + event.srcElement.parentElement.id);
         setClickedStory(event.srcElement.parentElement.id);
         // showStoryInfoBox(event.srcElement.parentElement.id);
+
+        let current_story_id = event.srcElement.parentElement.id;
+        if (current_story_id === "story-321") {
+          console.log("321321")
+        }
       });
 
       node.on('mouseover', event => {
@@ -314,6 +319,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
         if (current_id === focusedId.replace(' ', '-').toLowerCase()) {
           setHoverStory(current_id, {
             title: storyData.title,
+            author: storyData.author,
             imgSrc: current_imgSrc,
             totalViews: storyData.totalView,
             createdAt: storyData.createdAt,
@@ -321,6 +327,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
             gkrSimilarityScore: -1,
             contributingViews: -1,
             receivedViews: -1,
+            influenceScore: -1,
             color: current_color,
           });
         } else if (current_id === "other-sources") {
@@ -330,6 +337,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
             if (neighbor.id === current_id.split('-').pop()) {
               setHoverStory(current_id, {
                 title: neighbor.title,
+                author: neighbor.author,
                 imgSrc: current_imgSrc,
                 totalViews: neighbor.totalView,
                 createdAt: neighbor.createdAt,
@@ -337,6 +345,7 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
                 gkrSimilarityScore: 52354235,
                 contributingViews: 23423,
                 receivedViews: 234234,
+                influenceScore: neighbor.influenceScore,
                 color: current_color,
               });
             }
@@ -374,123 +383,123 @@ const InfluenceGraph = ({ width, height, vbWidth, vbHeight, storyData, dateRange
 
       // invalidation.then(() => simulation.stop());
 
-      const storyInfoBox = svg.append('g');
+      // const storyInfoBox = svg.append('g');
 
-      storyInfoBox
-        .append('rect')
-        .attr('id', 'otherInfobox')
-        .attr("fill", "white")
-        .attr("stroke", "DarkOliveGreen")
-        .attr("stroke-width", 2);
+      // storyInfoBox
+      //   .append('rect')
+      //   .attr('id', 'otherInfobox')
+      //   .attr("fill", "white")
+      //   .attr("stroke", "DarkOliveGreen")
+      //   .attr("stroke-width", 2);
 
-      storyInfoBox.append("defs")
-        .append("clipPath")
-        .attr("id", "otherInfobox-clippath")
-        .append("rect");
+      // storyInfoBox.append("defs")
+      //   .append("clipPath")
+      //   .attr("id", "otherInfobox-clippath")
+      //   .append("rect");
 
-      storyInfoBox.append("image")
-        .attr("id", "otherInfobox")
-        .attr("clip-path", 'url(#otherInfobox-clippath)');
+      // storyInfoBox.append("image")
+      //   .attr("id", "otherInfobox")
+      //   .attr("clip-path", 'url(#otherInfobox-clippath)');
 
-      storyInfoBox
-        .append('text')
-        .attr('id', 'otherInfobox')
-        .attr('display', 'none')
-        .style('font-size', '12px');
+      // storyInfoBox
+      //   .append('text')
+      //   .attr('id', 'otherInfobox')
+      //   .attr('display', 'none')
+      //   .style('font-size', '12px');
 
-      const showStoryInfoBox = (storyId) => {
-        // console.log("showStoryInfoBox", storyId);
+      // const showStoryInfoBox = (storyId) => {
+      //   // console.log("showStoryInfoBox", storyId);
 
-        var img_width = 300;
-        var img_height = 100;
-        var box_width = img_width + 10;
-        var box_height = img_height + 120;
+      //   var img_width = 300;
+      //   var img_height = 100;
+      //   var box_width = img_width + 10;
+      //   var box_height = img_height + 120;
 
-        var xpos_node = d3.select(`#${storyId}`)._groups[0][0].__data__.x;
-        // console.log(xpos_node)
-        var xpos_infoText = xpos_node + 20;
-        var ypos_node = d3.select(`#${storyId}`)._groups[0][0].__data__.y;
-        var ypos_infoText = -80 + ypos_node;
-        // if (ypos_infoText < chart_topMargin) {
-        //   ypos_infoText += 180;
-        // }
+      //   var xpos_node = d3.select(`#${storyId}`)._groups[0][0].__data__.x;
+      //   // console.log(xpos_node)
+      //   var xpos_infoText = xpos_node + 20;
+      //   var ypos_node = d3.select(`#${storyId}`)._groups[0][0].__data__.y;
+      //   var ypos_infoText = -80 + ypos_node;
+      //   // if (ypos_infoText < chart_topMargin) {
+      //   //   ypos_infoText += 180;
+      //   // }
 
-        svg.select('#otherInfobox-clippath').select("rect")
-          .attr('x', xpos_infoText - 10)
-          .attr('y', ypos_infoText - 15)
-          .style("transform", `translate(${xpos_infoText * (-1)}px,${ypos_infoText * (-1)}px`)
-          .attr('width', img_width)
-          .attr('height', img_height);
+      //   svg.select('#otherInfobox-clippath').select("rect")
+      //     .attr('x', xpos_infoText - 10)
+      //     .attr('y', ypos_infoText - 15)
+      //     .style("transform", `translate(${xpos_infoText * (-1)}px,${ypos_infoText * (-1)}px`)
+      //     .attr('width', img_width)
+      //     .attr('height', img_height);
 
-        svg.select('image#otherInfobox')
-          .attr("xlink:href", () => {
-            // console.log(storyId);
-            if (storyId === "story-2") return img_src[0];
-            if (storyId === "story-321") return img_src[1];
-            if (storyId === "story-12") return img_src[2];
-            if (storyId === "story-3974") return img_src[3];
-            if (storyId === "story-279") return img_src[0];
-            if (storyId === "story-842") return img_src[1];
-            return img_src[3];
-          })
-          .attr('width', img_width)
-          // .attr('height', img_height)
-          .style("transform", `translate(${xpos_infoText}px,${ypos_infoText - 8}px`);
+      //   svg.select('image#otherInfobox')
+      //     .attr("xlink:href", () => {
+      //       // console.log(storyId);
+      //       if (storyId === "story-2") return img_src[0];
+      //       if (storyId === "story-321") return img_src[1];
+      //       if (storyId === "story-12") return img_src[2];
+      //       if (storyId === "story-3974") return img_src[3];
+      //       if (storyId === "story-279") return img_src[0];
+      //       if (storyId === "story-842") return img_src[1];
+      //       return img_src[3];
+      //     })
+      //     .attr('width', img_width)
+      //     // .attr('height', img_height)
+      //     .style("transform", `translate(${xpos_infoText}px,${ypos_infoText - 8}px`);
 
-        svg.select('text#otherInfobox')
-          .attr('y', ypos_infoText + img_height)
-          .attr('display', 'block')
-          .html(
-            '<tspan x="' +
-            xpos_infoText +
-            '" dy="0" font-weight="bold" font-size="18px">' +
-            storyId +
-            '</tspan><tspan x="' +
-            xpos_infoText +
-            '" dy="15">Total views: <tspan font-weight="bold" style="fill:DarkOliveGreen">' +
-            10000000 +
-            '</tspan> views</tspan><tspan x="' +
-            xpos_infoText +
-            '" dy="15">Created at: <tspan style="fill:DarkOliveGreen">' +
-            '06/25/2022' +
-            '</tspan></tspan><tspan x="' +
-            xpos_infoText +
-            '" dy="15">Keywords: <tspan style="fill:DarkOliveGreen">' +
-            'Keyword 1, ' + 'Keyword 2, ' + 'Keyword 3' +
-            '</tspan></tspan><tspan x="' +
-            xpos_infoText +
-            '" dy="15">GKR similarity score: <tspan style="fill:DarkOliveGreen">' +
-            100000000 +
-            '</tspan></tspan><tspan x="' +
-            xpos_infoText +
-            '" dy="15">Contributed <tspan style="fill:DarkOliveGreen">' +
-            100000000 +
-            '</tspan> views</tspan><tspan x="' +
-            xpos_infoText +
-            '" dy="15">Received <tspan style="fill:DarkOliveGreen">' +
-            100000000 +
-            '</tspan> views</tspan>'
-          );
+      //   svg.select('text#otherInfobox')
+      //     .attr('y', ypos_infoText + img_height)
+      //     .attr('display', 'block')
+      //     .html(
+      //       '<tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="0" font-weight="bold" font-size="18px">' +
+      //       storyId +
+      //       '</tspan><tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="15">Total views: <tspan font-weight="bold" style="fill:DarkOliveGreen">' +
+      //       10000000 +
+      //       '</tspan> views</tspan><tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="15">Created at: <tspan style="fill:DarkOliveGreen">' +
+      //       '06/25/2022' +
+      //       '</tspan></tspan><tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="15">Keywords: <tspan style="fill:DarkOliveGreen">' +
+      //       'Keyword 1, ' + 'Keyword 2, ' + 'Keyword 3' +
+      //       '</tspan></tspan><tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="15">GKR similarity score: <tspan style="fill:DarkOliveGreen">' +
+      //       100000000 +
+      //       '</tspan></tspan><tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="15">Contributed <tspan style="fill:DarkOliveGreen">' +
+      //       100000000 +
+      //       '</tspan> views</tspan><tspan x="' +
+      //       xpos_infoText +
+      //       '" dy="15">Received <tspan style="fill:DarkOliveGreen">' +
+      //       100000000 +
+      //       '</tspan> views</tspan>'
+      //     );
 
-        // var textWidth = infotext.node().getBBox().width;
-        svg.select('rect#otherInfobox')
-          .attr('x', xpos_infoText - 10)
-          .attr('y', ypos_infoText - 15)
-          .attr('width', box_width)
-          .attr('height', box_height)
-          .attr('display', 'block');
-      }
+      //   // var textWidth = infotext.node().getBBox().width;
+      //   svg.select('rect#otherInfobox')
+      //     .attr('x', xpos_infoText - 10)
+      //     .attr('y', ypos_infoText - 15)
+      //     .attr('width', box_width)
+      //     .attr('height', box_height)
+      //     .attr('display', 'block');
+      // }
 
-      const hideStoryInfoBox = () => {
-        svg.select('rect#otherInfobox')
-          .attr('display', 'none');
+      // const hideStoryInfoBox = () => {
+      //   svg.select('rect#otherInfobox')
+      //     .attr('display', 'none');
 
-        svg.select('image#otherInfobox')
-          .attr("xlink:href", "");
+      //   svg.select('image#otherInfobox')
+      //     .attr("xlink:href", "");
 
-        svg.select('text#otherInfobox')
-          .attr('display', 'none');
-      }
+      //   svg.select('text#otherInfobox')
+      //     .attr('display', 'none');
+      // }
 
     }, []);
 

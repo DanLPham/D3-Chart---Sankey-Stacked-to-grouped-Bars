@@ -5,6 +5,7 @@ import 'rc-slider/assets/index.css';
 
 import data from './Data/data2.json';
 import story_data from './Data/demodata.json';
+import story321_data from './Data/demodata_story321.json';
 import graph_data from './Data/graph_data.json';
 
 import BarChart from "../BarChart";
@@ -15,12 +16,9 @@ import StoryInformation from "./StoryInformation";
 import KeywordTree from "./KeywordTree";
 
 const width = 1200;
-const barchartHeight = 200;
-const nodelinkHeight = 550;
-
-const timesliderStyle = {
-  width: width,
-};
+const barchartHeight = 150;
+const nodelinkHeight = 500;
+const left_column_padding = 60;
 
 const colorNode = ["#D9D1B0", "#E07A5F", "#8F5D5D", "#3D405B", "#5F797B", "#69C7C4", "#81B29A", "#F0CC4C"];
 const colorLink = ["#646BE7", "#CB273D", "#7DA81E"];
@@ -302,6 +300,7 @@ export default class App extends React.Component {
         ...prev,
         storyInfo: {
           title: storyInfo.title,
+          author: storyInfo.author,
           imgSrc: storyInfo.imgSrc,
           totalViews: storyInfo.totalViews,
           createdAt: storyInfo.createdAt,
@@ -309,6 +308,7 @@ export default class App extends React.Component {
           gkrSimilarityScore: storyInfo.gkrSimilarityScore,
           contributingViews: storyInfo.contributingViews,
           receivedViews: storyInfo.receivedViews,
+          influenceScore: storyInfo.influenceScore,
           color: storyInfo.color,
         },
       }));
@@ -331,18 +331,17 @@ export default class App extends React.Component {
 
   render = () => {
     return (
-      <div style={{ height: '100px', margin: '20px 150px', }}>
-        <div>Influence Network 2.0 - Which stories influence the current story?</div>
-        <div><u>Current action</u>: {this.state.action}</div>
-        <div style={{ height: '10px' }}></div>
+      <div style={{ height: '10px', margin: '20px 150px', }}>
+        <div>Influence Network 2.0.1 - Which stories influence the current story?</div>
+        {/* <div style={{ height: '10px' }}></div> */}
         <div>Daily View mode:</div>
         <div onChange={this.onChangeValueRadioBtnBarChart}>
           <input type="radio" value="stacked" name="barchartmode" checked={this.state.selectedRadioOption === "stacked"} /> Stacked
           <input type="radio" value="grouped" name="barchartmode" checked={this.state.selectedRadioOption === "grouped"} /> Grouped
         </div>
-        <div style={{ height: '10px' }}></div>
+        {/* <div style={{ height: '10px' }}></div> */}
         <div>Time frame: {this.displayDate(this.state.selectedDate[0])} to {this.displayDate(this.state.selectedDate[1])}</div>
-        <div style={{ height: '20px' }}></div>
+        {/* <div style={{ height: '20px' }}></div> */}
         <BarChart
           width={width}
           height={barchartHeight}
@@ -355,11 +354,11 @@ export default class App extends React.Component {
           hoverId={this.state.hoverId}
           setNewAction={this.setNewAction}
         />
-        <div style={timesliderStyle}>
+        <div style={{ width: width, padding: '0px 10px' }}>
           <Slider range allowCross={false} defaultValue={[0, 100]} onChange={this.log} />
         </div>
 
-        <div style={{ height: '10px' }}></div>
+        {/* <div style={{ height: '10px' }}></div> */}
 
         <div style={{
           height: nodelinkHeight + 30,
@@ -375,6 +374,7 @@ export default class App extends React.Component {
             vbHeight={nodelinkHeight}
             data={graph_data}
             storyData={story_data}
+            story321_data={story321_data}
             dateRange={this.state.selectedDate}
             mode={this.state.selectedRadioOption}
             colorNode={colorNode}
@@ -390,22 +390,22 @@ export default class App extends React.Component {
           position: 'fixed',
           left: 150 + width * 3 / 5,
         }}>
-          <div style={{ width: '100%', height: nodelinkHeight / 2 + 40, }}>
+          <div style={{ width: '100%', height: nodelinkHeight / 2 + 15 + left_column_padding, }}>
             <StoryInformation storyInfo={this.state.storyInfo} />
           </div>
           <div style={{
             width: '100%',
-            height: nodelinkHeight / 2 - 10,
+            height: nodelinkHeight / 2 + 15 - left_column_padding,
             backgroundColor: '#F4F7E5',
           }}>
             <div style={{ padding: '10px 15px', }}>
               <div style={{ color: "#6D734F", fontWeight: 'bold', fontSize: '1rem', }}>
-                Keyword Hierarchy {this.state.storyInfo.title ? 'between Story 2 and' : ''} {this.state.storyInfo.title}
+                Keyword Hierarchy {(this.state.storyInfo.title !== "Story 2" && this.state.storyInfo.title) ? `between Story 2 and ${this.state.storyInfo.title}` : ''}
               </div>
             </div>
             <KeywordTree
               width={width * 2 / 5}
-              height={nodelinkHeight / 2 - 10}
+              height={nodelinkHeight / 2 + 15 - left_column_padding}
             />
           </div>
         </div>
