@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 const StoryInformation = ({ width, height, storyInfo, ...rest }) => {
   useEffect(() => {
-    console.log("storyInfo:", storyInfo);
+    // console.log("storyInfo:", storyInfo);
   }, [storyInfo]);
 
   const field_name_width = 150 + 'px';

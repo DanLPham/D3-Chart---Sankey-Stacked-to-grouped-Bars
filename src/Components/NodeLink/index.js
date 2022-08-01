@@ -20,8 +20,9 @@ const barchartHeight = 150;
 const nodelinkHeight = 500;
 const left_column_padding = 60;
 
-const colorNode = ["#D9D1B0", "#E07A5F", "#8F5D5D", "#3D405B", "#5F797B", "#69C7C4", "#81B29A", "#F0CC4C"];
-const colorLink = ["#646BE7", "#CB273D", "#7DA81E"];
+const colorNode = ["#D9D1B0", "#E07A5F", "#8F5D5D", "#3D405B", "#5F797B", "#69C7C4", "#F06B99", "#A16ECE", "#F0CC4C"];
+const colorLink_2ndlink = "#B5AEBB";
+const colorLink = ["#646BE7", "#CB273D", "#7DA81E", colorLink_2ndlink, colorLink_2ndlink];
 const focusedColor = "#F4F1DE";
 
 const startDate = new Date(story_data.createdAt);

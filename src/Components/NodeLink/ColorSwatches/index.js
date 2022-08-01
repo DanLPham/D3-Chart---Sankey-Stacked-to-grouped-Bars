@@ -4,7 +4,7 @@ import * as d3 from "d3";
 import { useD3 } from '../../Utilities/useD3';
 
 const InfluenceGraph = ({ width, height, vbWidth, vbHeight, colorLink, ...rest }) => {
-  const types = ["contributing view", "receiving view", "GKR similarity"];
+  const types = ["contributing view", "receiving view", "GKR similarity", "2nd-layered traffic"];
 
   const ref = useD3(
     (svg) => {
